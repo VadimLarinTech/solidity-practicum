@@ -13,6 +13,7 @@ abstract contract RPSBaseERC20 is IERC20, Ownable {
     string private _symbol;
     uint8 private _decimals;
     address private _owner;
+    bool private _paused;
 
     uint256 private _totalSupply;
     mapping(address account => uint256) private _balances;
@@ -24,6 +25,29 @@ abstract contract RPSBaseERC20 is IERC20, Ownable {
         _symbol = tokenSymbol_;
         _decimals = tokenDecimals_;
         mint(owner(), amountOfMintTokens);
+        _paused = false;
+    }
+
+    /**
+     * MODIFIERS
+     */
+
+    /**
+     * @dev Modifier that checks if the contract is paused.
+     * Reverts if the contract is not paused.
+     */
+    modifier whenPaused() {
+        require(_paused, "Contract is paused");
+        _;
+    }
+
+    /**
+     * @dev Modifier that checks if the contract is not paused.
+     * Reverts if the contract is paused.
+     */
+    modifier whenNotPaused() {
+        require(!_paused, "Contract isn't paused");
+        _;
     }
 
     /**
@@ -154,6 +178,7 @@ abstract contract RPSBaseERC20 is IERC20, Ownable {
     /**
     * @dev Mints `amount` of tokens to the `account`.
     * Can only be called by the owner.
+    * Can only be called when the contract is not paused.
     * 
     * Requirements:
     * - `account` cannot be the zero address.
@@ -163,7 +188,7 @@ abstract contract RPSBaseERC20 is IERC20, Ownable {
     * @param account The address that will receive the minted tokens.
     * @param amount The amount of tokens to mint.
     */
-    function mint(address account, uint256 amount) public onlyOwner() {
+    function mint(address account, uint256 amount) public onlyOwner whenNotPaused {
         if (account == address(0)) {
             revert InvalidERC20Receiver(account);
         }
@@ -184,13 +209,29 @@ abstract contract RPSBaseERC20 is IERC20, Ownable {
     * @param account The address from which the tokens will be burned.
     * @param amount The amount of tokens to burn.
     */
-    function burn(address account, uint256 amount) public onlyOwner() {
+    function burn(address account, uint256 amount) public onlyOwner {
         if (account == address(0)) {
             revert InvalidERC20Receiver(account);
         }
         _totalSupply -= amount;
         _balances[account] -= amount;
         emit Transfer(account, address(0), amount);
+    }
+
+    /**
+     * @dev Sets the contract to the paused state.
+     * Can only be called by the owner and when the contract is not paused.
+     */
+    function pause() external onlyOwner whenNotPaused {
+        _paused = true;
+    }
+
+    /**
+     * @dev Unpauses the contract.
+     * Can only be called by the owner and when the contract is paused.
+     */
+    function unpause() external onlyOwner whenPaused() {
+        _paused = false;
     }
 
     function _transfer(address from, address to, uint256 value) internal {
