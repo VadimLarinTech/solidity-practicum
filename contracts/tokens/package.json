@@ -1,0 +1,23 @@
+{
+  "name": "solidity-practicum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VadimLarinTech/solidity-practicum.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VadimLarinTech/solidity-practicum/issues"
+  },
+  "homepage": "https://github.com/VadimLarinTech/solidity-practicum#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2"
+  }
+}

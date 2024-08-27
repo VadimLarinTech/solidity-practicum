@@ -1,0 +1,17 @@
+# VSCode settings
+.vscode/
+
+# Ignore bin directory containing compiled artifacts
+bin/
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Build output
+dist/
