@@ -3,6 +3,10 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+/** 
+ * @title BaseDEX
+ * @dev Base contract for swap tokens.
+ */
 contract BaseDEX is Ownable {
     mapping(address => bool) private _listings;
     mapping(address => mapping(address => uint256)) private _tokenRates;
@@ -80,19 +84,19 @@ contract BaseDEX is Ownable {
     * - Tokens involved in the transaction must be listed on the platform.
     * - For ETH transactions, `msg.value` must match the `amount` being swapped.
     * 
+    * TODO add SafeTransfer OZ
+    * TODO Implement swap rate calculation and apply it to the transfer
+    * 
     * @param tokenToSell The address of the token to sell. Use address(0) to indicate ETH.
     * @param tokenToBuy The address of the token to buy. Use address(0) to indicate ETH.
     * @param amount The amount of tokens or ETH to swap.
     */
     function swapTokens(address tokenToSell, address tokenToBuy, uint256 amount) public onlyForListed(tokenToSell, tokenToBuy) payable {
-        // To sell Eth, get Token, send Eth
         if (tokenToSell == address(0)) {
             require(msg.value == amount, "Ethereum value must be same with amount of buing token");
-            // @TODO: Implement swap rate calculation and apply it to the transfer
             require(IERC20(tokenToBuy).transfer(msg.sender, amount),"Unsuccessful transfer to buy token");
             emit Swap(msg.sender, tokenToSell, tokenToBuy, amount);                        
         }
-        // To buy Eth, to sell Token, send Token, get Eth
         else if (tokenToBuy == address(0)) {
             require(address(this).balance >= amount, "Insufficient the Contract Eth balance");
             require(IERC20(tokenToSell).transferFrom(msg.sender, address(this), amount), "Unsuccessful transfer to sell token");
@@ -116,5 +120,8 @@ contract BaseDEX is Ownable {
         require(succesfulCall, "Failed to withdraw Ether");
     }
 
+    /**
+    * @dev Allows recieve Eth to the contract.
+    */
     receive() external payable {}
 }

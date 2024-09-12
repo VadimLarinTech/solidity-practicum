@@ -20,6 +20,12 @@ abstract contract RPSBaseERC20 is IERC20, Ownable {
 
     mapping(address account => mapping(address spender => uint256)) _allowances;
 
+    /**
+     * @dev Sets the values for {name}, {symbol}, {decimals}, mint initial amount of tokens.
+     *
+     * All three of these values are immutable: they can only be set once during
+     * construction.
+     */
     constructor(string memory tokenName_, string memory tokenSymbol_, uint8 tokenDecimals_, uint256 amountOfMintTokens) Ownable(msg.sender) {
         _name = tokenName_;
         _symbol = tokenSymbol_;
@@ -87,21 +93,21 @@ abstract contract RPSBaseERC20 is IERC20, Ownable {
      */
 
     /**
-    * @dev Token name
+    * @dev Returns token name.
     */
     function name() public view virtual returns(string memory) {
         return _name;
     }
 
     /**
-    * @dev Symbol of token
+    * @dev Returns symbol of the token
     */
     function symbol() public view virtual returns(string memory) {
         return _symbol;
     }
 
     /**
-    * @dev Token decimals
+    * @dev Returns the number of decimals used to get its user representation.
     */
     function decimals() public view virtual returns(uint8) {
         return _decimals;
@@ -109,6 +115,7 @@ abstract contract RPSBaseERC20 is IERC20, Ownable {
 
     /**
     * @dev Total number of tokens in existence
+    * @return balance An uint256 representing the amount owned by the passed address.
     */
     function totalSupply() public view virtual returns(uint256) {
         return _totalSupply;
